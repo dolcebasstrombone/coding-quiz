@@ -52,7 +52,7 @@ var startQuizButton = document.querySelector("#start-quiz");
 startQuizButton.addEventListener("click", startQuiz);
 ///-----------------------------------------------------------end code block of button with listener
 
-//called by event listener (wasnt able to write as var, why?)
+//called by event listener
 function startQuiz() {
   var timeLeft = 120;
   //sets and displays timeLeft
@@ -73,63 +73,141 @@ function startQuiz() {
     } //-------------------------------------------------------------end suspect code block
   }, 1000); //1000 represents milliseconds
 
-  //for as long as there are questions left, do this
-  for (var i = 0; i < questionsObj.length; i++) {
-    //if theres still time, show another question
-    if (timeLeft > 0) {
-      //DOM reference for container element and the current question
+  //if theres still time, show another question
+  if (timeLeft > 0) {
+    //for as long as there are questions, loop
+    for (var i = 0; i < questionsObj.length; i++) {
+      //container DOM reference
       var containerEl = document.querySelector("#container");
-      var thisQuestion = questionsObj[i]; //declared as var, the next for loop wouldnt work with 'i' var involved
-      //display the next question
-      var nextQuestion = function () {
+      //display question function
+      var displayQuestion = function () {
         //erase content from last question or from homepage
         containerEl.innerHTML = "";
         //create question content and append
         var questionContentEl = document.createElement("h2");
-        questionContentEl.textContent = thisQuestion.question;
+        questionContentEl.textContent = questionsObj[i].question;
         containerEl.appendChild(questionContentEl);
-        //for as long as there are undisplayed answers, create and append answer buttons
-        for (var j = 0; j < thisQuestion.answers.length; j++) {
-          var answerButtonEl = document.createElement("button");
-          answerButtonEl.textContent = questionsObj[i].answers[j];
-          answerButtonEl.className = "answer-button";
-          containerEl.appendChild(answerButtonEl);
-        }
-      }; //displays question
-      //-------------------------------------------------------------------------------------------------working code end
-
-      //listen for click on an answerContent child, response check answer and move on
-      var checkAnswer = function (event) {
-        if (event.target.matches('.answer-button')) {
-          console.log(thisQuestion.correct); //this works
-          if (document.querySelector('.answer-button').value === thisQuestion.correct) { //this doesnt
-            console.log('correct');
-          } else {
-            console.log('wrong');
-          }
-        }
-        //if answer button content matches question[i].correct, create and append correct display
-        //else answer button content doesnt match, create and append wrong display, deduct time, return timeLeft
-        //else nothing, no need to write an else
       };
-      nextQuestion();
-      containerEl.addEventListener("click", checkAnswer);
-      //break loop needed?
-      //if there isnt time or there are no more questions
-      //if timeLeft is 0 or if questions run out
-    } else {
-      //endQuiz (captures score)
-      //break loop?
+      displayQuestion();
+      //-----------------------------------------------------------------------
+      //display answers function
+      function displayAnswers() {
+        questionsObj[i].answers.forEach(function (answer) {
+          var thisQuestion = questionsObj[i];
+          var thisQuestionAnswerButtonEl = document.createElement("button");
+          thisQuestionAnswerButtonEl.textContent = answer;
+          thisQuestionAnswerButtonEl.className = "answer-button";
+          thisQuestionAnswerButtonEl.setAttribute("value", answer);
+          containerEl.appendChild(thisQuestionAnswerButtonEl);
+        });
+      }
+      displayAnswers();
     }
+    //display next question and answers
+    //if right, display right
+    //if wrong, display wrong and subtract time left
+  } else {
+    //run endQuiz
   }
 }
 
-var endQuiz = function () {
-  //capture time left as score (probably don't need to make a score var, could just use timeLeft)
-  var score = timeLeft;
-  timerEl.textContent = "Your score: " + score;
-  //let user input initials
-  //button to store initials and score in local storage
-  //move to new html page that displays all scores highest to lowest
-  window.location.pathname(highscore.html); //find out if this actually works, also try window.location.href = ""; or window.replace();
-};
+// (function (index) { //this function wont get back to the loop
+//   thisQuestionAnswerButtonEl.addEventListener("click", function () { //this function is working
+//     var correctnessEl = document.querySelector("#correctness");
+//     if (index !== thisQuestion.correct) {
+//       correctnessEl.innerHTML = '';
+//       var wrongAlertEl = document.createElement("h3");
+//       wrongAlertEl.textContent = 'Wrong!';
+//       correctnessEl.appendChild(wrongAlertEl);
+//       timeLeft -= 10;
+//     } else {
+//       correctnessEl.innerHTML = '';
+//       var correctAlertEl = document.createElement("h3");
+//       correctAlertEl.textContent = 'Correct!';
+//       correctnessEl.appendChild(correctAlertEl);
+//     }
+//   }); //this function is working
+// }/* this function wont go back to the loop */)();
+
+// var endQuiz = function () {
+//   //capture time left as score (probably don't need to make a score var, could just use timeLeft)
+//   var score = timeLeft;
+//   timerEl.textContent = "Your score: " + score;
+//   //let user input initials
+//   //button to store initials and score in local storage
+//   //move to new html page that displays all scores highest to lowest
+//   window.location.pathname(highscore.html); //find out if this actually works, also try window.location.href = ""; or window.replace();
+//   //window.open?
+// };
+
+
+//var thisQuestion = questionsObj[i];
+// for (var j = 0; j < thisQuestion.answers.length; j++) {
+//   var thisQuestionAnswerButtonEl = document.createElement("button");
+//   thisQuestionAnswerButtonEl.textContent = thisQuestion.answers[j];
+//   thisQuestionAnswerButtonEl.className = "answer-button";
+//   containerEl.appendChild(thisQuestionAnswerButtonEl);
+
+// //listen for click on answer button
+// //display next question
+// //add right/wrong alert
+// var clickedAnswer = function() {
+//   //show next question
+//   //add correct or wrong alert
+// }
+// var answerListener = function() {
+//   //create event listener on all answer buttons
+//   //listen for click
+//   //call next functions
+// }
+
+//   //for as long as there are questions left, do this
+//   for (var i = 0; i < questionsObj.length; i++) {
+//     //if theres still time, show another question
+//     while (timeLeft > 0) {
+//       //DOM reference for container element and the current question
+//       var containerEl = document.querySelector("#container");
+//       var thisQuestion = questionsObj[i]; //declared as var, the next for loop wouldnt work with 'i' var involved
+//       //display the next question
+//       var nextQuestion = function () {
+//         //erase content from last question or from homepage
+//         containerEl.innerHTML = "";
+//         //create question content and append
+//         var questionContentEl = document.createElement("h2");
+//         questionContentEl.textContent = thisQuestion.question;
+//         containerEl.appendChild(questionContentEl);
+//         //for as long as there are undisplayed answers, create and append answer buttons
+//         for (var j = 0; j < thisQuestion.answers.length; j++) {
+//           var answerButtonEl = document.createElement("button");
+//           answerButtonEl.textContent = thisQuestion.answers[j];
+//           answerButtonEl.className = "answer-button";
+//           containerEl.appendChild(answerButtonEl);
+//         }
+//         //listen for click on an answerContent child, response check answer and move on
+//         containerEl.addEventListener("click", checkAnswer);
+//       };
+//       //-------------------------------------------------------------------------------------------------working code end
+//       var checkAnswer = function (event) {
+//         if (event.target.matches(".answer-button")) {
+//           console.log(thisQuestion.correct);
+//           if (document.querySelector(".answer-button").value === thisQuestion.correct) {
+//             nextQuestion();
+//             console.log("correct");
+//           } else {
+//             nextQuestion();
+//             console.log("wrong");
+//           }
+//         }
+//         //if answer button content matches question[i].correct, create and append correct display
+//         //else answer button content doesnt match, create and append wrong display, deduct time, return timeLeft
+//         //else nothing, no need to write an else
+//       };
+//       nextQuestion();
+//       //break loop needed?
+//       //if there isnt time or there are no more questions
+//       //if timeLeft is 0 or if questions run out
+//     } else {
+//       //endQuiz (captures score)
+//       //break loop?
+//     }
+//   }
