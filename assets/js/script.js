@@ -43,7 +43,7 @@ var questionsObj = [
   },
 ];
 var timerEl = document.querySelector("#timer");
-var timeLeft = 120;
+var timeLeft = 60;
 var questionIndex = 0;
 var containerEl = document.querySelector("#container");
 var correctnessEl = document.querySelector("#correctness");
@@ -66,19 +66,12 @@ function startQuiz() {
     } // if there is no time left, stop the counter
     else {
       timerEl.textContent = "";
+      timeLeft = 0;
       clearInterval(timer);
+      endQuiz();
     }
   }, 1000); //1000 represents milliseconds
 
-  //if theres still time, show another question
-  if (timeLeft > 0) {
-    displayQuestion();
-    // else end the quiz
-  } else {
-    endQuiz();
-  }
-
-  //called if timer hasn't run out
   function displayQuestion() {
     //erase content from last question or from homepage
     containerEl.innerHTML = "";
@@ -91,12 +84,14 @@ function startQuiz() {
     questionsObj[questionIndex].answers.forEach(function (answer) {
       var thisQuestionAnswerButtonEl = document.createElement("button");
       thisQuestionAnswerButtonEl.textContent = answer;
-      thisQuestionAnswerButtonEl.className = "answer-button";
+      thisQuestionAnswerButtonEl.className =
+        "answer-button btn btn-outline-dark";
       thisQuestionAnswerButtonEl.setAttribute("value", answer);
       thisQuestionAnswerButtonEl.addEventListener("click", answerResponse);
       containerEl.appendChild(thisQuestionAnswerButtonEl);
     });
   }
+  displayQuestion();
 
   function answerResponse(event) {
     if (event.target.textContent === questionsObj[questionIndex].correct) {
@@ -132,24 +127,31 @@ function endQuiz() {
   containerEl.appendChild(scoreEl);
   //display initials input
   var initialsInputEl = document.createElement("div");
-  initialsInputEl.innerHTML = "<p>Enter Your Initials:</p><input id='initials' type='text' max='3' />";
+  initialsInputEl.innerHTML =
+    "<p>Enter Your Initials:</p><input id='initials' type='text' max='3' />";
   containerEl.appendChild(initialsInputEl);
   //display submit button with listener
   var submitButtonEl = document.createElement("button");
   submitButtonEl.textContent = "Submit";
+  submitButtonEl.className = "btn btn-outline-dark";
   submitButtonEl.addEventListener("click", storeScore);
   containerEl.appendChild(submitButtonEl);
 
   //stores score in local storage and moves to highscore.html
   function storeScore() {
-    var allHighScores = JSON.parse(localStorage.getItem('allHighScores')) || [];
-    var initials = document.querySelector('#initials').value.trim();
-    var userScore = {
-      initials: initials,
-      score: timeLeft,
-    };
-    allHighScores.push(userScore);
-    localStorage.setItem('allHighScores', JSON.stringify(allHighScores));
-    location.href = 'highscore.html';
+    var allHighScores = JSON.parse(localStorage.getItem("allHighScores")) || [];
+    var initials = document.querySelector("#initials").value.trim();
+    if (initials === "" || null) {
+      window.alert("Please enter your initials.");
+      return;
+    } else {
+      var userScore = {
+        initials: initials,
+        score: timeLeft,
+      };
+      allHighScores.push(userScore);
+      localStorage.setItem("allHighScores", JSON.stringify(allHighScores));
+      location.href = "highscore.html";
+    }
   }
 }
